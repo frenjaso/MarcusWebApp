@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+
+<table id="taskTable">
+    <tr>
+        <th>Item</th>
+        <th>Status</th>
+    </tr>
+    {{#tasks}}
+        <tr>
+            <td>
+                {{name}}
+            </td>
+            <td>
+                <button onclick="myFunction('{{id}}')">{{status}}</button>
+            </td>
+        </tr>
+    {{/tasks}}
+</table>
+
+<button id="loadTasks">Load Tasks</button>
+
+<script>
+    let myTasks = JSON.parse('{{{tasksJson}}}')
+</script>
+
+<script>
+    function myFunction(taskId) {
+        // alert(`Task name is ${myTasks.name}`)
+        alert(taskId)
+    }
+</script>
+
+
+<script>
+    $('#loadTasks').click(function() {
+        $.ajax({
+            url: '/api/tasks',
+            type: 'GET',
+            dataType: 'json',
+            success: function(data) {
+                // Handle the response data and dynamically add it to the table
+                for (let task of data) {  // assuming the data returned has a "tasks" array
+                    let newRow = `<tr>
+                                <td>${task.name}</td>
+                                <td>${task.status}</td>
+                              </tr>`;
+                    $('table#taskTable').append(newRow);
+                }
+            },
+            error: function(error) {
+                // Handle any errors here
+                console.error("Error occurred:", error);
+            }
+        });
+    });
+</script>
+
+
+</body>
+</html>
+
